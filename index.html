@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>WordWise – English Vocabulary Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f4ff;--surface:#ffffff;--surface2:#eef1fb;--border:#d8dff5;
+  --text:#1a1d3a;--text2:#6b72a0;--text3:#a0a8cc;
+  --teal:#00b894;--teal-light:#d0f5ec;--teal-dark:#007a5e;
+  --blue:#4f72ff;--blue-light:#e0e8ff;--blue-dark:#2244cc;
+  --purple:#9b5de5;--purple-light:#f0e8ff;--purple-dark:#5c2fa0;
+  --pink:#f72585;--pink-light:#ffe0f0;
+  --yellow:#ffd166;--yellow-light:#fff8e0;--yellow-dark:#a07000;
+  --coral:#ff6b6b;--coral-light:#ffe8e8;
+  --green-light:#d4f5e0;--green-dark:#1a6b3a;
+  --red-light:#ffe0e0;--red:#d63031;
+  --shadow:0 4px 20px rgba(79,114,255,0.10);--shadow-lg:0 8px 32px rgba(79,114,255,0.16);
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;overflow-x:hidden}
+body::before{content:"";position:fixed;top:-120px;right:-120px;width:380px;height:380px;background:radial-gradient(circle,rgba(155,93,229,0.18) 0%,transparent 70%);pointer-events:none;z-index:0}
+body::after{content:"";position:fixed;bottom:-100px;left:-100px;width:340px;height:340px;background:radial-gradient(circle,rgba(0,184,148,0.16) 0%,transparent 70%);pointer-events:none;z-index:0}
+.app{max-width:940px;margin:0 auto;padding:1.5rem;position:relative;z-index:1}
+.shape{position:fixed;border-radius:50%;pointer-events:none;z-index:0;opacity:0.5}
+.shape1{width:60px;height:60px;background:var(--yellow);top:12%;left:3%;animation:float1 6s ease-in-out infinite}
+.shape2{width:40px;height:40px;background:var(--pink-light);border:3px solid var(--pink);top:30%;right:4%;animation:float2 8s ease-in-out infinite}
+.shape3{width:28px;height:28px;background:var(--teal-light);border:2px solid var(--teal);top:60%;left:2%;animation:float1 7s ease-in-out infinite 1s}
+.shape4{width:50px;height:50px;background:var(--blue-light);border:2px solid var(--blue);bottom:20%;right:3%;animation:float2 9s ease-in-out infinite 2s}
+@keyframes float1{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-18px) rotate(12deg)}}
+@keyframes float2{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-14px) rotate(-10deg)}}
+input,select,textarea{background:var(--surface);color:var(--text);border:2px solid var(--border);border-radius:12px;padding:9px 14px;font-size:0.85rem;width:100%;font-family:'Nunito',sans-serif;transition:border-color 0.2s,box-shadow 0.2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,114,255,0.15)}
+button{cursor:pointer;font-size:0.85rem;border-radius:12px;border:2px solid var(--border);padding:9px 18px;background:var(--surface);color:var(--text);transition:all 0.18s;font-family:'Nunito',sans-serif;font-weight:700}
+button:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+button:active{transform:scale(0.97)}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(79,114,255,0.35)}
+.btn-primary:hover{box-shadow:0 6px 20px rgba(79,114,255,0.45)}
+.btn-green{background:linear-gradient(135deg,var(--teal),#00d4a8);color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(0,184,148,0.3)}
+.btn-green:hover{box-shadow:0 6px 20px rgba(0,184,148,0.4)}
+.btn-sm{padding:5px 12px;font-size:0.78rem;border-radius:8px}
+.btn-danger{background:var(--red-light);color:var(--red);border-color:#ffb3b3}
+.btn-danger:hover{background:#ffc8c8}
+.card{background:var(--surface);border:2px solid var(--border);border-radius:20px;padding:1.4rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+.card-title{font-size:0.95rem;font-weight:800;margin-bottom:0.85rem;color:var(--text)}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding:1rem 1.4rem;background:var(--surface);border-radius:20px;border:2px solid var(--border);box-shadow:var(--shadow)}
+.logo{font-size:1.4rem;font-weight:900;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px}
+.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:0.72rem;font-weight:800;letter-spacing:0.5px}
+.badge-t{background:linear-gradient(135deg,var(--yellow),#ffaa00);color:#fff}
+.badge-s{background:linear-gradient(135deg,var(--teal),#00d4a8);color:#fff}
+.tabs{display:flex;gap:4px;margin-bottom:1.5rem;background:var(--surface);border-radius:16px;padding:5px;flex-wrap:wrap;box-shadow:var(--shadow);border:2px solid var(--border)}
+.tab{flex:1;min-width:80px;padding:8px 4px;text-align:center;border-radius:12px;font-size:0.78rem;color:var(--text2);border:none;background:none;transition:all 0.2s;cursor:pointer;font-weight:700}
+.tab.active{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;box-shadow:0 3px 10px rgba(79,114,255,0.3)}
+.tab:hover:not(.active){background:var(--blue-light);color:var(--blue)}
+.row{display:flex;align-items:center;gap:10px}
+.field{display:flex;flex-direction:column;gap:5px;flex:1}
+.field label{font-size:0.75rem;color:var(--text2);font-weight:800;letter-spacing:0.3px;text-transform:uppercase}
+.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:800;flex-shrink:0;box-shadow:0 3px 8px rgba(79,114,255,0.3)}
+.list-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:2px dashed var(--border)}
+.list-row:last-child{border-bottom:none}
+.chip{display:inline-flex;align-items:center;border-radius:20px;padding:5px 12px;font-size:0.78rem;font-weight:700;margin:3px;cursor:pointer;transition:all 0.15s}
+.chip-teal{background:var(--teal-light);color:var(--teal-dark);border:1.5px solid var(--teal)}
+.chip-blue{background:var(--blue-light);color:var(--blue-dark);border:1.5px solid var(--blue)}
+.chip-purple{background:var(--purple-light);color:var(--purple-dark);border:1.5px solid var(--purple)}
+.chip:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.muted{color:var(--text2);font-size:0.8rem}
+.progress-bar{height:8px;background:var(--surface2);border-radius:4px;margin-top:5px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--teal),var(--blue));transition:width 0.5s}
+/* FLASHCARDS */
+.fc-wrap{perspective:1000px;height:210px;margin-bottom:1.2rem;cursor:pointer;user-select:none}
+.fc{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.55s cubic-bezier(.4,0,.2,1);border-radius:20px}
+.fc.flipped{transform:rotateY(180deg)}
+.fc-front,.fc-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid transparent;padding:1.2rem}
+.fc-front{background:linear-gradient(135deg,#e0f0ff,#f0e8ff);border-color:var(--blue)}
+.fc-back{background:linear-gradient(135deg,#d0f5ec,#e0f0ff);border-color:var(--teal);transform:rotateY(180deg)}
+.fc-word{font-size:2rem;font-weight:900;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;text-align:center}
+.fc-hint{font-size:0.75rem;color:var(--text2);font-weight:600}
+.fc-def{font-size:0.95rem;color:var(--teal-dark);text-align:center;font-weight:700;line-height:1.5;margin-bottom:8px}
+.fc-ru{font-size:0.9rem;color:var(--purple-dark);font-weight:800;margin-top:6px;text-align:center}
+/* QUIZ */
+.quiz-opt{padding:12px 16px;border:2px solid var(--border);border-radius:14px;cursor:pointer;font-size:0.88rem;text-align:left;background:var(--surface);color:var(--text);transition:all 0.18s;width:100%;margin-bottom:8px;font-family:'Nunito',sans-serif;font-weight:600}
+.quiz-opt:hover:not([disabled]){border-color:var(--blue);background:var(--blue-light);transform:translateX(4px)}
+.quiz-opt.correct{background:var(--green-light);border-color:var(--teal);color:var(--green-dark)}
+.quiz-opt.wrong{background:var(--red-light);border-color:var(--coral);color:#7a1010}
+/* SCORE */
+.score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.2rem}
+.score-card{background:linear-gradient(135deg,var(--blue-light),var(--purple-light));border-radius:14px;padding:0.85rem;text-align:center;border:2px solid var(--border)}
+.score-num{font-size:1.7rem;font-weight:900}
+.score-lbl{font-size:0.68rem;color:var(--text2);margin-top:2px;font-weight:700;text-transform:uppercase}
+/* AUTH */
+.auth-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:90vh;gap:1.5rem}
+.auth-hero{text-align:center}
+.auth-hero h1{font-size:2.8rem;font-weight:900;background:linear-gradient(135deg,var(--blue),var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;line-height:1.1}
+.auth-hero p{font-size:1rem;color:var(--text2);margin-top:8px;font-weight:600}
+.auth-box{background:var(--surface);border:2px solid var(--border);border-radius:24px;padding:2.2rem;width:100%;max-width:420px;box-shadow:var(--shadow-lg)}
+.divider{display:flex;align-items:center;gap:10px;margin:1rem 0;color:var(--text3);font-size:0.78rem;font-weight:700}
+.divider::before,.divider::after{content:"";flex:1;height:2px;background:var(--border);border-radius:1px}
+.google-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;border:2px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;font-size:0.88rem;font-weight:700;margin-bottom:0.75rem;font-family:'Nunito',sans-serif;transition:all 0.18s}
+.google-btn:hover{background:var(--surface2);transform:translateY(-1px);box-shadow:var(--shadow)}
+.role-tabs{display:flex;gap:4px;margin-bottom:1.4rem;background:var(--surface2);border-radius:12px;padding:4px;border:2px solid var(--border)}
+.role-tab{flex:1;padding:8px;text-align:center;border-radius:9px;font-size:0.84rem;cursor:pointer;border:none;background:none;color:var(--text2);font-family:'Nunito',sans-serif;font-weight:700;transition:all 0.18s}
+.role-tab.active{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;box-shadow:0 3px 10px rgba(79,114,255,0.3)}
+/* SPEAKING */
+.speaking-prompt{background:linear-gradient(135deg,var(--teal-light),var(--blue-light));border-radius:16px;padding:1.3rem;margin-bottom:1rem;border:2px solid var(--teal)}
+.speaking-prompt h4{color:var(--teal-dark);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;font-weight:800}
+.speaking-prompt p{color:var(--teal-dark);line-height:1.6;font-weight:600}
+.mic-btn{width:70px;height:70px;border-radius:50%;border:3px solid var(--blue);background:linear-gradient(135deg,var(--blue-light),var(--purple-light));display:flex;align-items:center;justify-content:center;font-size:1.8rem;transition:all 0.22s;cursor:pointer;margin:0 auto;box-shadow:0 4px 16px rgba(79,114,255,0.2)}
+.mic-btn:hover{transform:scale(1.08)}
+.mic-btn.rec{background:linear-gradient(135deg,#ffe0e0,var(--pink-light));border-color:var(--coral);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+/* GRAMMAR */
+.grammar-q{background:linear-gradient(135deg,var(--purple-light),var(--blue-light));border-radius:16px;padding:1.2rem;margin-bottom:1rem;border:2px solid var(--purple)}
+.grammar-q h4{color:var(--purple-dark);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;font-weight:800}
+.grammar-q p{color:var(--purple-dark);line-height:1.6;font-weight:600}
+/* ALERTS */
+.alert-err{background:var(--red-light);color:var(--red);border-radius:12px;padding:10px 14px;font-size:0.82rem;margin-bottom:0.75rem;border:2px solid #ffb3b3;font-weight:600}
+.alert-ok{background:var(--green-light);color:var(--green-dark);border-radius:12px;padding:10px 14px;font-size:0.82rem;margin-bottom:0.75rem;border:2px solid var(--teal);font-weight:600}
+.empty{text-align:center;padding:2.5rem;color:var(--text2);font-style:italic;font-weight:600}
+/* TRANSLATION */
+.trans-box{margin-top:6px;display:flex;flex-wrap:wrap;gap:5px}
+.trans-chip{background:var(--yellow-light);color:var(--yellow-dark);border:1.5px solid var(--yellow);border-radius:10px;padding:3px 10px;font-size:0.76rem;font-weight:700;cursor:pointer;transition:all 0.15s}
+.trans-chip:hover{background:var(--yellow);color:#fff;transform:translateY(-1px)}
+.trans-loading{font-size:0.75rem;color:var(--text3);font-style:italic;padding:4px 0;font-weight:600}
+/* AI explanation box */
+.ai-box{background:linear-gradient(135deg,#f0e8ff,#e0f0ff);border:2px solid var(--purple);border-radius:14px;padding:1rem 1.2rem;margin-top:0.85rem;font-size:0.88rem;line-height:1.6;color:var(--purple-dark);font-weight:600}
+.ai-box .ai-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.6px;font-weight:800;margin-bottom:4px;opacity:0.7}
+/* Motivation box */
+.motivation-box{background:linear-gradient(135deg,var(--yellow-light),var(--pink-light));border:2px solid var(--yellow);border-radius:16px;padding:1.2rem 1.4rem;margin-bottom:1rem;text-align:center}
+.motivation-box .mot-emoji{font-size:2rem;margin-bottom:6px}
+.motivation-box .mot-text{font-size:0.95rem;font-weight:700;color:var(--text);line-height:1.5}
+/* DOT LOADER */
+.dot{width:7px;height:7px;border-radius:50%;background:var(--purple);animation:blink 1.2s infinite;display:inline-block;margin:0 2px}
+.dot:nth-child(2){animation-delay:0.2s}.dot:nth-child(3){animation-delay:0.4s}
+@keyframes blink{0%,80%,100%{opacity:0.2}40%{opacity:1}}
+.ai-spin{display:flex;align-items:center;gap:8px;color:var(--text2);font-size:0.82rem;padding:0.6rem 0;font-weight:600}
+/* EMOJI COUNTER */
+.emoji-counter{display:flex;gap:3px;align-items:center;font-size:1.1rem}
+/* ASSIGNMENTS */
+.assign-task-card{background:linear-gradient(135deg,var(--blue-light),var(--purple-light));border:2px solid var(--blue);border-radius:16px;padding:1rem 1.2rem;margin-bottom:0.75rem}
+.assign-task-card .task-type{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.6px;font-weight:800;color:var(--blue-dark);margin-bottom:4px}
+.assign-task-card .task-title{font-size:0.95rem;font-weight:800;color:var(--text);margin-bottom:4px}
+.assign-task-card .task-desc{font-size:0.82rem;color:var(--text2);font-weight:600}
+.task-done{opacity:0.5;border-color:var(--teal)!important;background:var(--green-light)!important}
+</style>
+</head>
+<body>
+<div class="shape shape1"></div><div class="shape shape2"></div>
+<div class="shape shape3"></div><div class="shape shape4"></div>
+<div id="root" class="app"></div>
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID_HERE";
+const ANTHROPIC_API_KEY = "YOUR_UPLOAD_PRESET_HERE";
+const CLOUDINARY_CLOUD_NAME = "jprssup0"; 
+const CLOUDINARY_UPLOAD_PRESET = "jx5dmhsx"; 
+
+// ─── ACTIVITY TRACKING (localStorage) ────────────────────────────────────────
+function actKey(sid){ return "ww_activity_"+sid; }
+function loadActivity(sid){
+  try{ return JSON.parse(localStorage.getItem(actKey(sid))||"null")||{quiz:[],grammar:[],speaking:[],wordsAdded:0}; }
+  catch{ return {quiz:[],grammar:[],speaking:[],wordsAdded:0}; }
+}
+function saveActivity(sid,data){
+  try{ localStorage.setItem(actKey(sid),JSON.stringify(data)); }catch{}
+}
+function logQuiz(sid,correct,word,question,studentAnswer,correctAnswer){
+  const a=loadActivity(sid);
+  a.quiz=[{correct,word,question,studentAnswer,correctAnswer,at:_now()},...a.quiz].slice(0,20);
+  saveActivity(sid,a);
+}
+function logGrammar(sid,correct,type,question,studentAnswer,correctAnswer){
+  const a=loadActivity(sid);
+  a.grammar=[{correct,type,question,studentAnswer,correctAnswer,at:_now()},...a.grammar].slice(0,20);
+  saveActivity(sid,a);
+}
+function logSpeaking(sid,dur,prompt,audioUrl){
+  const a=loadActivity(sid);
+  a.speaking=[{dur,prompt:prompt?prompt.slice(0,60):"",audioUrl:audioUrl||null,at:_now()},...a.speaking].slice(0,20);
+  saveActivity(sid,a);
+}
+function logWordAdded(sid){
+  const a=loadActivity(sid);
+  a.wordsAdded=(a.wordsAdded||0)+1;
+  saveActivity(sid,a);
+}
+function _now(){
+  return new Date().toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+}
+
+// ─── DATABASE ─────────────────────────────────────────────────────────────────
+const DB = {
+  users:[
+    {id:"t1",role:"teacher",name:"Ms. Johnson",email:"teacher@school.com",pass:"1234"},
+    {id:"s1",role:"student",name:"Mia Schneider",email:"mia@school.com",pass:"1234",teacherId:"t1",progress:78,quizCorrect:12,quizTotal:16},
+    {id:"s2",role:"student",name:"Leon Fischer",email:"leon@school.com",pass:"1234",teacherId:"t1",progress:55,quizCorrect:6,quizTotal:12},
+    {id:"s3",role:"student",name:"Sophie Bauer",email:"sophie@school.com",pass:"1234",teacherId:"t1",progress:90,quizCorrect:18,quizTotal:20},
+    {id:"s4",role:"student",name:"Tim Wagner",email:"tim@school.com",pass:"1234",teacherId:"t1",progress:30,quizCorrect:3,quizTotal:10},
+    {id:"s5",role:"student",name:"Anna Müller",email:"anna@school.com",pass:"1234",teacherId:"t1",progress:65,quizCorrect:9,quizTotal:14},
+  ],
+  words:[
+    {id:"w1",word:"ambitious",def:"having a strong desire for success or achievement",ru:"честолюбивый, амбициозный",addedBy:"t1",assignedTo:["s1","s2","s3"]},
+    {id:"w2",word:"perseverance",def:"continued effort despite difficulties",ru:"настойчивость, упорство",addedBy:"t1",assignedTo:["s1","s3","s4"]},
+    {id:"w3",word:"eloquent",def:"fluent and persuasive in speaking or writing",ru:"красноречивый",addedBy:"t1",assignedTo:["s2","s3"]},
+    {id:"w4",word:"meticulous",def:"showing great attention to detail; very careful",ru:"педантичный, тщательный",addedBy:"t1",assignedTo:["s1","s2","s3","s4","s5"]},
+    {id:"w5",word:"resilient",def:"able to recover quickly from difficult conditions",ru:"стойкий, упругий",addedBy:"t1",assignedTo:["s3","s5"]},
+    {id:"w6",word:"articulate",def:"able to express thoughts clearly and effectively",ru:"красноречивый, чётко выражающий мысли",addedBy:"t1",assignedTo:["s1","s4"]},
+  ],
+  assignments:[], // {id, teacherId, title, type, description, questions:[{q,options,correct}], assignedTo:[], doneBy:[]}
+  nextId:100
+};
+
+// ─── GRAMMAR TEMPLATES ────────────────────────────────────────────────────────
+const GRAMMAR_TEMPLATES=[
+  {type:"Correct tense",make(word){
+    const opts=["She has studied","She studied","She is studying","She will studies"];
+    return{instruction:"Choose the correct verb form.",question:`______ vocabulary every day, including words like "${word}".`,options:opts,correct:"She has studied"};
+  }},
+  {type:"Word form",make(word){
+    const forms={ambitious:["ambition","ambitiousness","ambitiously"],eloquent:["eloquence","eloquentness","eloquently"],
+      resilient:["resilience","resiliency","resiliently"],meticulous:["meticulousness","meticulosity","meticulously"],
+      articulate:["articulation","articulateness","articulately"],perseverance:["persevere","perseverance","perseveringly"]};
+    const f=forms[word]||[word+"ly",word+"ness",word+"ion"];
+    const opts=[f[0],f[1],f[2],word].sort(()=>Math.random()-0.5);
+    return{instruction:"Choose the correct noun form.",question:`Her speech showed great ______ — she explained everything clearly. (base: "${word}")`,options:opts,correct:f[1]};
+  }},
+  {type:"Error correction",make(word){
+    const sentences=[
+      {wrong:`He is very ${word} in his works, isn't he?`,correct:"doesn't he?"},
+      {wrong:`Despite of being ${word}, she still made mistakes.`,correct:"Despite being"},
+      {wrong:`The student, who was very ${word}, have finished first.`,correct:"has finished"},
+    ];
+    const s=sentences[Math.floor(Math.random()*sentences.length)];
+    const opts=[s.correct,"no error","a "+s.correct,"the "+s.correct].sort(()=>Math.random()-0.5);
+    return{instruction:"Find and correct the grammar error.",question:s.wrong,options:opts,correct:s.correct};
+  }},
+  {type:"Fill in the gap",make(word){
+    const w=DB.words.find(x=>x.word===word);
+    const sentence=w&&w.ex?w.ex:`She is known for being very ${word} in everything she does.`;
+    const others=DB.words.filter(x=>x.word!==word).sort(()=>Math.random()-0.5).slice(0,3).map(x=>x.word);
+    const opts=[...others,word].sort(()=>Math.random()-0.5);
+    return{instruction:"Choose the correct word.",question:sentence.replace(new RegExp(word,"gi"),"______"),options:opts,correct:word};
+  }},
+  {type:"Choose the translation",make(word){
+    const w=DB.words.find(x=>x.word===word);
+    if(!w||!w.ru)return null;
+    const others=DB.words.filter(x=>x.word!==word&&x.ru).sort(()=>Math.random()-0.5).slice(0,3).map(x=>x.ru);
+    if(others.length<3)return null;
+    const opts=[...others,w.ru].sort(()=>Math.random()-0.5);
+    return{instruction:"Choose the correct Russian translation.",question:`"${word}" — ${w.def}`,options:opts,correct:w.ru};
+  }}
+];
+function makeGrammarTask(word){
+  const valid=GRAMMAR_TEMPLATES.map(t=>t.make(word)).filter(Boolean);
+  return valid[Math.floor(Math.random()*valid.length)];
+}
+
+const SPEAKING_TEMPLATES=[
+  w=>`Tell me about a time when you had to be really ${w}. What happened and how did it turn out?`,
+  w=>`Do you know anyone who is ${w}? Describe them with a concrete example.`,
+  w=>`How important is it to be ${w} in modern life? Give your opinion with examples.`,
+  w=>`Would you like to be more ${w}? Why or why not?`,
+  w=>`Think of a job where being ${w} is very important. Explain why.`,
+];
+function makeSpeakingPrompt(words){
+  const w=words[Math.floor(Math.random()*words.length)];
+  return{prompt:SPEAKING_TEMPLATES[Math.floor(Math.random()*SPEAKING_TEMPLATES.length)](w.word),word:w.word};
+}
+
+// ─── EMOJI SETS ───────────────────────────────────────────────────────────────
+const CARD_EMOJIS=["🌟","🎯","🚀","🦋","🌈","🎪","🎭","🦄","🌺","🎨","🏆","💡","🎸","🌙","⚡","🎠","🦚","🌊","🎋","🔮"];
+const ADD_EMOJIS=["🎉","✨","🥳","🎊","💫","🌟","🚀","🎯","🦄","🌈","🏅","💥","🎆","🎇","🌠","⭐","🎁","🎀","🍀","🔥"];
+function rndEmoji(arr,n){
+  const shuffled=[...arr].sort(()=>Math.random()-0.5);
+  return shuffled.slice(0,n);
+}
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let S={
+  view:"auth",loginRole:"student",loginEmail:"",loginPass:"",loginErr:"",
+  authMode:"login",regName:"",regEmail:"",regPass:"",regRole:"student",regErr:"",googlePrefilled:false,
+  user:null,
+  teacherTab:"words",studentTab:"flashcards",
+  fcIdx:0,fcFlipped:false,fcEmoji:null,
+  newWord:"",newDef:"",newEx:"",newRu:"",transLoading:false,transSuggestions:[],transRu:"",
+  newStudEmail:"",newStudName:"",newStudErr:"",
+  assignStudId:"",
+  quizQ:null,quizAnswered:null,quizScore:{c:0,t:0},
+  grammarTask:null,grammarAnswered:null,grammarExplain:null,grammarExplainLoading:false,
+  speakingData:null,recording:false,recordings:[],
+  motivation:null,motivationLoading:false,uploadingAudio:false,
+  addFlash:null, // {emojis:[...]} shown briefly after adding word
+  // Teacher assignments
+  teacherAssignTab:"create", // "create"|"list"
+  viewingStudentDetail:null,
+  newTaskType:"grammar",newTaskTitle:"",newTaskDesc:"",newTaskQuestions:[],newTaskAssignTo:[],newTaskErr:"",
+  // Student assignments
+  currentAssignment:null,assignAnswers:{},assignDone:false,
+};
+
+function set(patch){Object.assign(S,patch);render()}
+function initials(name){return name.split(" ").map(p=>p[0]).join("").toUpperCase().slice(0,2)}
+function studentWords(sid){return DB.words.filter(w=>w.assignedTo.includes(sid))}
+function myStudents(tid){return DB.users.filter(u=>u.role==="student"&&u.teacherId===tid)}
+function myAssignments(sid){return DB.assignments.filter(a=>a.assignedTo.includes(sid))}
+function teacherAssignments(tid){return DB.assignments.filter(a=>a.teacherId===tid)}
+
+// ─── TRANSLATION ──────────────────────────────────────────────────────────────
+let _transTimer=null;
+function onWordInput(val){
+  S.newWord=val;
+  clearTimeout(_transTimer);
+  S.transSuggestions=[];S.transLoading=false;S.transRu="";
+  if(val.trim().length<2){render();return}
+  S.transLoading=true;render();
+  _transTimer=setTimeout(()=>fetchTranslation(val.trim()),600);
+}
+async function fetchTranslation(word){
+  try{
+    const r=await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|ru`);
+    const d=await r.json();
+    const s=[];
+    if(d.responseData?.translatedText)s.push(d.responseData.translatedText);
+    if(d.matches)d.matches.slice(0,5).forEach(m=>{if(m.translation&&!s.includes(m.translation)&&m.translation!==word)s.push(m.translation);});
+    S.transLoading=false;S.transSuggestions=s.slice(0,5);render();
+  }catch{S.transLoading=false;S.transSuggestions=[];render();}
+}
+function applyTranslation(t){
+  S.transRu=t;
+  const nd=document.getElementById("nd");if(nd&&!nd.value.trim()){nd.value=t;S.newDef=t;}
+  const nr=document.getElementById("nr");if(nr){nr.value=t;}
+  render();
+}
+
+// ─── CLAUDE API ───────────────────────────────────────────────────────────────
+async function callClaude(prompt){
+  const r=await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-api-key":ANTHROPIC_API_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:300,messages:[{role:"user",content:prompt}]})
+  });
+  const d=await r.json();
+  return d.content?.[0]?.text||"";
+}
+
+async function fetchGrammarExplanation(task,answered,correct){
+  set({grammarExplainLoading:true,grammarExplain:null});
+  try{
+    const isCorrect=answered===correct;
+    const prompt=`You are a friendly English teacher. A student just answered a grammar question.
+
+Question: "${task.question}"
+Task type: ${task.type}
+Student's answer: "${answered}"
+Correct answer: "${correct}"
+Result: ${isCorrect?"CORRECT ✅":"WRONG ❌"}
+
+Give a short, clear explanation (2-3 sentences max) of WHY this is the correct answer. Be encouraging and use simple language. If wrong, gently explain the rule. Be a bit fun and warm.`;
+    const text=await callClaude(prompt);
+    set({grammarExplain:text,grammarExplainLoading:false});
+  }catch{set({grammarExplain:"Couldn't load explanation — but keep going! 💪",grammarExplainLoading:false});}
+}
+
+async function fetchMotivation(studentName,pct,wordCount){
+  set({motivationLoading:true,motivation:null});
+  try{
+    const prompt=`You are a hilariously encouraging English teacher. Write ONE short motivational message (1-2 sentences) for a student named ${studentName}.
+
+Their stats: ${wordCount} words learned, ${pct}% quiz accuracy.
+
+Rules:
+- Address them by first name
+- Be genuinely funny and a bit silly (but not cringe)
+- English only
+- No quotes, no formatting, just plain text
+- Keep it under 30 words`;
+    const text=await callClaude(prompt);
+    set({motivation:text,motivationLoading:false});
+  }catch{set({motivation:`${studentName}, you're doing amazing — keep it up! 🚀`,motivationLoading:false});}
+}
+
+// ─── AUTH ─────────────────────────────────────────────────────────────────────
+function tryLogin(){
+  const u=DB.users.find(u=>u.email===S.loginEmail&&u.pass===S.loginPass&&u.role===S.loginRole);
+  if(!u){set({loginErr:"Wrong email or password."});return}
+  set({user:u,view:u.role,loginErr:"",loginEmail:"",loginPass:""});
+}
+function googleLogin(){
+  if(!window.google){alert("Google Sign-In didn't load. Check your internet connection.");return}
+  google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:handleGoogleCredential,auto_select:false});
+  google.accounts.id.prompt(n=>{
+    if(n.isNotDisplayed()||n.isSkippedMoment()){
+      google.accounts.id.renderButton(document.getElementById("google-btn-container"),{theme:"outline",size:"large",width:300});
+    }
+  });
+}
+function handleGoogleCredential(response){
+  const payload=JSON.parse(atob(response.credential.split(".")[1]));
+  const email=payload.email,name=payload.name||email.split("@")[0];
+  const existing=DB.users.find(u=>u.email===email);
+  if(existing){set({user:existing,view:existing.role,loginErr:"",regErr:""});return}
+  set({authMode:"register",regName:name,regEmail:email,regPass:"google-oauth",regErr:"",googlePrefilled:true});
+}
+function tryRegister(){
+  const name=S.regName.trim(),email=S.regEmail.trim(),pass=S.regPass.trim(),role=S.regRole;
+  if(!name||!email||!pass){set({regErr:"Please fill in all fields."});return}
+  if(DB.users.find(u=>u.email===email)){set({regErr:"This email already exists."});return}
+  const id="u"+(++DB.nextId);
+  const newUser={id,role,name,email,pass,progress:0,quizCorrect:0,quizTotal:0,teacherId:role==="student"?"t1":undefined};
+  DB.users.push(newUser);
+  set({user:newUser,view:role,regErr:"",regName:"",regEmail:"",regPass:""});
+}
+function logout(){
+  set({view:"auth",user:null,fcIdx:0,fcFlipped:false,quizQ:null,grammarTask:null,grammarAnswered:null,
+    grammarExplain:null,speakingData:null,recordings:[],quizScore:{c:0,t:0},motivation:null,
+    transLoading:false,transSuggestions:[],currentAssignment:null});
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function render(){
+  const root=document.getElementById("root");
+  if(S.view==="auth")root.innerHTML=renderAuth();
+  else if(S.view==="teacher")root.innerHTML=renderTeacher();
+  else if(S.view==="student")root.innerHTML=renderStudent();
+}
+
+// ─── AUTH SCREEN ──────────────────────────────────────────────────────────────
+function renderAuth(){
+  return `<div class="auth-wrap">
+    <div class="auth-hero"><h1>WordWise ✨</h1><p>English vocabulary trainer for teachers &amp; students</p></div>
+    <div class="auth-box">${S.authMode==="register"?renderRegister():renderLogin()}</div>
+  </div>`;
+}
+const GSVG=`<svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.8 2.5 30.3 0 24 0 14.8 0 6.9 5.4 3 13.3l7.8 6C12.7 13 17.9 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17z"/><path fill="#FBBC05" d="M10.8 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.8-6A24 24 0 0 0 0 24c0 3.9.9 7.5 2.5 10.7l8.3-6z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.2-8.4 2.2-6.1 0-11.3-3.5-13.2-9.3l-8.3 6C6.9 42.6 14.8 48 24 48z"/></svg>`;
+function renderLogin(){
+  return `
+    <div class="role-tabs">
+      <button class="role-tab ${S.loginRole==="student"?"active":""}" onclick="set({loginRole:'student',loginErr:''})">🎓 Student</button>
+      <button class="role-tab ${S.loginRole==="teacher"?"active":""}" onclick="set({loginRole:'teacher',loginErr:''})">👩‍🏫 Teacher</button>
+    </div>
+    <div style="font-size:1.1rem;font-weight:800;margin-bottom:4px">Sign in as ${S.loginRole}</div>
+    <div class="muted" style="margin-bottom:1.25rem">Demo: ${S.loginRole==="teacher"?"teacher@school.com":"mia@school.com"} / 1234</div>
+    <button class="google-btn" onclick="googleLogin()" id="google-signin-btn">${GSVG} Continue with Google</button>
+    <div id="google-btn-container" style="display:flex;justify-content:center;margin-top:6px"></div>
+    <div class="divider">or sign in with email</div>
+    <div class="field" style="margin-bottom:0.75rem"><label>Email</label>
+      <input type="email" placeholder="your@email.com" value="${S.loginEmail}" oninput="S.loginEmail=this.value" onkeydown="if(event.key==='Enter')tryLogin()"/></div>
+    <div class="field" style="margin-bottom:1rem"><label>Password</label>
+      <input type="password" placeholder="Password" value="${S.loginPass}" oninput="S.loginPass=this.value" onkeydown="if(event.key==='Enter')tryLogin()"/></div>
+    ${S.loginErr?`<div class="alert-err">${S.loginErr}</div>`:""}
+    <button class="btn-primary" style="width:100%;padding:11px" onclick="tryLogin()">Sign in →</button>
+    <div style="text-align:center;margin-top:1rem;font-size:0.82rem;color:var(--text2);font-weight:600">
+      Don't have an account? <span style="color:var(--blue);cursor:pointer;font-weight:800;text-decoration:underline" onclick="set({authMode:'register',loginErr:''})">Register</span>
+    </div>`;
+}
+function renderRegister(){
+  const g=S.googlePrefilled;
+  return `
+    <div style="font-size:1.1rem;font-weight:800;margin-bottom:4px">${g?"Almost there! 🎉":"Create an account"}</div>
+    <div class="muted" style="margin-bottom:1.25rem">${g?`Signed in as <strong>${S.regEmail}</strong> via Google — pick your role`:"Join WordWise"}</div>
+    ${g?"":`<button class="google-btn" onclick="googleLogin()">${GSVG} Sign up with Google</button><div class="divider">or register with email</div>`}
+    <div class="role-tabs" style="margin-bottom:1rem">
+      <button class="role-tab ${S.regRole==="student"?"active":""}" onclick="set({regRole:'student',regErr:''})">🎓 Student</button>
+      <button class="role-tab ${S.regRole==="teacher"?"active":""}" onclick="set({regRole:'teacher',regErr:''})">👩‍🏫 Teacher</button>
+    </div>
+    ${g?"":`
+    <div class="field" style="margin-bottom:0.75rem"><label>Full name</label><input type="text" placeholder="Your name" value="${S.regName}" oninput="S.regName=this.value"/></div>
+    <div class="field" style="margin-bottom:0.75rem"><label>Email</label><input type="email" placeholder="your@email.com" value="${S.regEmail}" oninput="S.regEmail=this.value"/></div>
+    <div class="field" style="margin-bottom:1rem"><label>Password</label><input type="password" placeholder="Choose a password" value="${S.regPass}" oninput="S.regPass=this.value" onkeydown="if(event.key==='Enter')tryRegister()"/></div>`}
+    ${S.regErr?`<div class="alert-err">${S.regErr}</div>`:""}
+    <button class="btn-primary" style="width:100%;padding:11px" onclick="tryRegister()">${g?"Finish sign-up →":"Create account →"}</button>
+    <div style="text-align:center;margin-top:1rem;font-size:0.82rem;color:var(--text2);font-weight:600">
+      Already have an account? <span style="color:var(--blue);cursor:pointer;font-weight:800;text-decoration:underline" onclick="set({authMode:'login',regErr:'',googlePrefilled:false})">Sign in</span>
+    </div>`;
+}
+
+// ─── HEADER ───────────────────────────────────────────────────────────────────
+function renderHeader(role){
+  return `<div class="header">
+    <div class="row" style="gap:12px">
+      <span class="logo">WordWise ✨</span>
+      <span class="badge ${role==="teacher"?"badge-t":"badge-s"}">${role==="teacher"?"👩‍🏫 Teacher":"🎓 Student"}</span>
+    </div>
+    <div class="row">
+      <span class="muted" style="font-weight:700">${S.user?.name||""}</span>
+      <button class="btn-sm btn-danger" onclick="logout()">Sign out</button>
+    </div>
+  </div>`;
+}
+
+// ─── TEACHER ──────────────────────────────────────────────────────────────────
+function renderTeacher(){
+  return renderHeader("teacher")+`
+  <div class="tabs">
+    <button class="tab ${S.teacherTab==="words"?"active":""}" onclick="set({teacherTab:'words'})">📚 Words</button>
+    <button class="tab ${S.teacherTab==="students"?"active":""}" onclick="set({teacherTab:'students'})">👥 Students</button>
+    <button class="tab ${S.teacherTab==="assign"?"active":""}" onclick="set({teacherTab:'assign'})">🎯 Assign</button>
+    <button class="tab ${S.teacherTab==="tasks"?"active":""}" onclick="set({teacherTab:'tasks'})">📋 Tasks</button>
+  </div>
+  ${S.teacherTab==="words"?renderTeacherWords():S.teacherTab==="students"?renderTeacherStudents():S.teacherTab==="assign"?renderTeacherAssign():renderTeacherTasks()}`;
+}
+
+function renderTeacherWords(){
+  return `
+  <div class="card">
+    <div class="card-title">➕ Add a new word</div>
+    <div style="display:grid;grid-template-columns:1fr 2fr 1fr;gap:10px;align-items:start">
+      <div class="field">
+        <label>English word</label>
+        <input id="nw" placeholder="e.g. ambitious" value="${S.newWord}" oninput="onWordInput(this.value)"/>
+        ${S.transLoading?`<div class="trans-loading">🔍 Fetching translations…</div>`:""}
+        ${S.transSuggestions.length?`<div class="trans-box">${S.transSuggestions.map(t=>`<span class="trans-chip" onclick="applyTranslation('${t.replace(/'/g,"&#39;")}')">${t}</span>`).join("")}</div>`:""}
+      </div>
+      <div class="field">
+        <label>Definition (English)</label>
+        <input id="nd" placeholder="Meaning in English…" oninput="S.newDef=this.value"/>
+      </div>
+      <div class="field">
+        <label>Russian translation</label>
+        <input id="nr" placeholder="перевод" value="${S.transRu}" oninput="S.transRu=this.value"/>
+      </div>
+    </div>
+    <div style="margin-top:10px;text-align:right">
+      <button class="btn-green btn-sm" onclick="addWord()">+ Add word</button>
+    </div>
+  </div>
+  ${S.addFlash?`<div style="text-align:center;font-size:1.6rem;margin-bottom:0.5rem;animation:float1 0.5s">${S.addFlash.emojis.join(" ")}</div>`:""}
+  <div class="card">
+    <div class="card-title">All words (${DB.words.length})</div>
+    ${DB.words.length===0?'<div class="empty">No words yet. Add your first! 🌱</div>':
+      DB.words.map(w=>`<div class="list-row">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:800;font-size:0.92rem">${w.word}
+            ${w.ru?`<span class="chip chip-purple" style="margin-left:6px;cursor:default;font-size:0.72rem">${w.ru}</span>`:""}
+            <span class="chip chip-teal" style="margin-left:4px;cursor:default;font-size:0.7rem">${w.assignedTo.length} students</span>
+          </div>
+          <div class="muted" style="margin-top:2px">${w.def}</div>
+        </div>
+        <button class="btn-sm btn-danger" style="flex-shrink:0;margin-left:12px" onclick="removeWord('${w.id}')">Remove</button>
+      </div>`).join("")}
+  </div>`;
+}
+
+function renderTeacherStudents(){
+  const students=myStudents(S.user.id);
+  if(S.viewingStudentDetail){
+    const s=DB.users.find(u=>u.id===S.viewingStudentDetail);
+    if(s)return renderStudentDetail(s);
+  }
+  return `
+  <div class="card">
+    <div class="card-title">➕ Add new student</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end">
+      <div class="field"><label>Full name</label><input placeholder="First Last" value="${S.newStudName}" oninput="S.newStudName=this.value"/></div>
+      <div class="field"><label>Email</label><input type="email" placeholder="student@school.com" value="${S.newStudEmail}" oninput="S.newStudEmail=this.value" onkeydown="if(event.key==='Enter')addStudent()"/></div>
+    </div>
+    ${S.newStudErr?`<div class="alert-err" style="margin-top:8px">${S.newStudErr}</div>`:""}
+    <div style="margin-top:10px;text-align:right"><button class="btn-primary btn-sm" onclick="addStudent()">+ Add student</button></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Your students (${students.length})</div>
+    ${students.length===0?'<div class="empty">No students yet. Add your first student! 🎓</div>':
+      students.map(s=>{
+        const act=loadActivity(s.id);
+        const qTotal=act.quiz.length;
+        const qCorrect=act.quiz.filter(q=>q.correct).length;
+        const gTotal=act.grammar.length;
+        const gCorrect=act.grammar.filter(g=>g.correct).length;
+        const spTotal=act.speaking.length;
+        const words=studentWords(s.id).length;
+        return `<div class="list-row">
+          <div class="row" style="gap:12px;flex:1;min-width:0">
+            <div class="avatar">${initials(s.name)}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:800;font-size:0.9rem">${s.name}</div>
+              <div class="muted" style="margin-bottom:4px">${s.email}</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <span style="font-size:0.72rem;background:var(--teal-light);color:var(--teal-dark);border-radius:8px;padding:2px 8px;font-weight:700">📚 ${words} words</span>
+                <span style="font-size:0.72rem;background:var(--blue-light);color:var(--blue-dark);border-radius:8px;padding:2px 8px;font-weight:700">🧩 ${qTotal} quiz${qTotal>0?" · "+Math.round(qCorrect/qTotal*100)+"%":""}</span>
+                <span style="font-size:0.72rem;background:var(--purple-light);color:var(--purple-dark);border-radius:8px;padding:2px 8px;font-weight:700">✏️ ${gTotal} grammar${gTotal>0?" · "+Math.round(gCorrect/gTotal*100)+"%":""}</span>
+                <span style="font-size:0.72rem;background:var(--yellow-light);color:var(--yellow-dark);border-radius:8px;padding:2px 8px;font-weight:700">🎙️ ${spTotal} recordings</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex-shrink:0;margin-left:12px">
+            <button class="btn-sm btn-primary" onclick="set({viewingStudentDetail:'${s.id}'})">👁 Details</button>
+            <button class="btn-sm btn-danger" onclick="removeStudent('${s.id}')">Remove</button>
+          </div>
+        </div>`;
+      }).join("")}
+  </div>`;
+}
+
+function renderStudentDetail(s){
+  const act=loadActivity(s.id);
+  const words=studentWords(s.id);
+  const qTotal=act.quiz.length,qCorrect=act.quiz.filter(q=>q.correct).length;
+  const gTotal=act.grammar.length,gCorrect=act.grammar.filter(g=>g.correct).length;
+  const tasks=myAssignments(s.id);
+  const tasksDone=tasks.filter(t=>t.doneBy.includes(s.id)).length;
+
+  return `<div>
+    <button class="btn-sm" style="margin-bottom:1rem" onclick="set({viewingStudentDetail:null})">← Back to students</button>
+    <div class="card">
+      <div class="row" style="gap:14px;margin-bottom:1rem">
+        <div class="avatar" style="width:52px;height:52px;font-size:1rem">${initials(s.name)}</div>
+        <div>
+          <div style="font-weight:900;font-size:1.1rem">${s.name}</div>
+          <div class="muted">${s.email}</div>
+        </div>
+      </div>
+      <div class="score-grid">
+        <div class="score-card"><div class="score-num" style="color:var(--teal)">${words.length}</div><div class="score-lbl">Words</div></div>
+        <div class="score-card"><div class="score-num" style="color:var(--blue)">${qTotal>0?Math.round(qCorrect/qTotal*100)+"%":"—"}</div><div class="score-lbl">Quiz acc.</div></div>
+        <div class="score-card"><div class="score-num" style="color:var(--purple)">${gTotal>0?Math.round(gCorrect/gTotal*100)+"%":"—"}</div><div class="score-lbl">Grammar acc.</div></div>
+        <div class="score-card"><div class="score-num" style="color:var(--yellow-dark)">${act.speaking.length}</div><div class="score-lbl">Recordings</div></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">🧩 Quiz history (last 5)</div>
+        ${act.quiz.length===0?'<div class="empty" style="padding:1rem">No quizzes yet</div>':
+          act.quiz.slice(0,5).map(q=>`<div style="border:2px solid ${q.correct?"var(--teal)":"var(--coral)"};border-radius:12px;padding:9px 12px;margin-bottom:7px;background:${q.correct?"var(--green-light)":"var(--red-light)"}">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="font-size:0.72rem;font-weight:800;color:var(--text2)">${q.at}</span>
+              <span style="font-size:0.9rem">${q.correct?"✅":"❌"}</span>
+            </div>
+            <div style="font-size:0.78rem;font-weight:700;color:var(--text);margin-bottom:3px">❓ ${(q.question||q.word||"Quiz").slice(0,70)}</div>
+            <div style="font-size:0.75rem;font-weight:600">
+              <span style="color:var(--text2)">Student: </span><span style="color:${q.correct?"var(--teal-dark)":"var(--red)"};font-weight:800">${q.studentAnswer||"—"}</span>
+              ${!q.correct?`<span style="color:var(--text2);margin-left:8px">Correct: </span><span style="color:var(--teal-dark);font-weight:800">${q.correctAnswer||"—"}</span>`:""}
+            </div>
+          </div>`).join("")}
+        ${act.quiz.length>0?`<div class="muted" style="margin-top:4px;font-size:0.72rem;text-align:right">${qTotal} total · ${qCorrect} correct (${qTotal>0?Math.round(qCorrect/qTotal*100):0}%)</div>`:""}
+      </div>
+
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">✏️ Grammar history (last 5)</div>
+        ${act.grammar.length===0?'<div class="empty" style="padding:1rem">No grammar yet</div>':
+          act.grammar.slice(0,5).map(g=>`<div style="border:2px solid ${g.correct?"var(--teal)":"var(--coral)"};border-radius:12px;padding:9px 12px;margin-bottom:7px;background:${g.correct?"var(--green-light)":"var(--red-light)"}">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="font-size:0.72rem;font-weight:800;color:var(--text2)">${g.type} · ${g.at}</span>
+              <span style="font-size:0.9rem">${g.correct?"✅":"❌"}</span>
+            </div>
+            <div style="font-size:0.78rem;font-weight:700;color:var(--text);margin-bottom:3px">❓ ${(g.question||"").slice(0,70)}</div>
+            <div style="font-size:0.75rem;font-weight:600">
+              <span style="color:var(--text2)">Student: </span><span style="color:${g.correct?"var(--teal-dark)":"var(--red)"};font-weight:800">${g.studentAnswer||"—"}</span>
+              ${!g.correct?`<span style="color:var(--text2);margin-left:8px">Correct: </span><span style="color:var(--teal-dark);font-weight:800">${g.correctAnswer||"—"}</span>`:""}
+            </div>
+          </div>`).join("")}
+        ${act.grammar.length>0?`<div class="muted" style="margin-top:4px;font-size:0.72rem;text-align:right">${gTotal} total · ${gCorrect} correct (${gTotal>0?Math.round(gCorrect/gTotal*100):0}%)</div>`:""}
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1rem">
+      <div class="card-title">🎙️ Speaking sessions (last 5)</div>
+      ${act.speaking.length===0?'<div class="empty">No speaking sessions yet</div>':
+        act.speaking.slice(0,5).map((r,i)=>`<div style="border:2px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <span style="font-size:0.82rem;font-weight:800">Recording ${i+1} · ${r.dur}s</span>
+            <span style="font-size:0.72rem;color:var(--text2)">${r.at}</span>
+          </div>
+          ${r.prompt?`<div style="font-size:0.75rem;color:var(--text2);font-style:italic;margin-bottom:6px">${r.prompt}</div>`:""}
+          ${r.audioUrl
+            ?`<audio controls src="${r.audioUrl}" style="width:100%;height:32px;border-radius:8px"></audio>`
+            :`<div style="font-size:0.72rem;color:var(--text3);font-weight:600">⚠️ Audio not saved — Cloudinary not configured</div>`}
+        </div>`).join("")}
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 Assigned tasks</div>
+      ${tasks.length===0?'<div class="empty">No tasks assigned</div>':
+        tasks.map(t=>{
+          const done=t.doneBy.includes(s.id);
+          const hasComment=t.comments&&t.comments[s.id];
+          return `<div class="list-row">
+            <div style="flex:1">
+              <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;color:var(--blue-dark)">${t.type}</div>
+              <div style="font-weight:700;font-size:0.88rem">${t.title}</div>
+              ${hasComment?`<div class="muted" style="font-size:0.75rem">💬 "${t.comments[s.id]}"</div>`:""}
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+              <span style="font-size:0.82rem;font-weight:700;color:${done?"var(--teal)":"var(--text3)"}">${done?"✅ Done":"⏳ Pending"}</span>
+              ${done?`<button class="btn-sm" style="font-size:0.7rem" onclick="set({teacherTab:'tasks',teacherAssignTab:'list',viewingTask:'${t.id}',viewingStudent:'${s.id}',teacherComment:'${((t.comments&&t.comments[s.id])||"").replace(/'/g,"\'")}',viewingStudentDetail:null})">View answers</button>`:""}
+            </div>
+          </div>`;
+        }).join("")}
+    </div>
+
+    <div class="card">
+      <div class="card-title">📚 Word list (${words.length})</div>
+      ${words.length===0?'<div class="empty">No words assigned</div>':
+        `<div style="display:flex;flex-wrap:wrap">${words.map(w=>`<span class="chip chip-teal" style="cursor:default">${w.word}${w.ru?`<span style="opacity:0.6;font-size:0.7rem;margin-left:3px">· ${w.ru}</span>`:""}</span>`).join("")}</div>`}
+    </div>
+  </div>`;
+}
+
+function renderTeacherAssign(){
+  const students=myStudents(S.user.id);
+  const sid=S.assignStudId||(students[0]?.id)||"";
+  if(!sid)return`<div class="card"><div class="empty">Add students first before assigning words.</div></div>`;
+  return `
+  <div class="card">
+    <div class="field" style="margin-bottom:1.2rem"><label>Select student</label>
+      <select onchange="set({assignStudId:this.value})">
+        ${students.map(s=>`<option value="${s.id}" ${sid===s.id?"selected":""}>${s.name}</option>`).join("")}
+      </select>
+    </div>
+    ${DB.words.map(w=>{
+      const has=w.assignedTo.includes(sid);
+      return `<div class="list-row">
+        <div><div style="font-weight:800;font-size:0.9rem">${w.word}${w.ru?` <span class="muted">· ${w.ru}</span>`:""}</div>
+        <div class="muted">${w.def.slice(0,70)}${w.def.length>70?"...":""}</div></div>
+        <button class="btn-sm ${has?"btn-green":"btn-primary"}" onclick="toggleAssign('${w.id}','${sid}')">${has?"✓ Assigned":"+ Assign"}</button>
+      </div>`;
+    }).join("")}
+  </div>`;
+}
+
+// ─── TEACHER TASKS ────────────────────────────────────────────────────────────
+function renderTeacherTasks(){
+  const tasks=teacherAssignments(S.user.id);
+  const students=myStudents(S.user.id);
+  return `
+  <div style="display:flex;gap:8px;margin-bottom:1rem">
+    <button class="btn-sm ${S.teacherAssignTab==="create"?"btn-primary":""}" onclick="set({teacherAssignTab:'create'})">➕ Create task</button>
+    <button class="btn-sm ${S.teacherAssignTab==="list"?"btn-primary":""}" onclick="set({teacherAssignTab:'list'})">📋 My tasks (${tasks.length})</button>
+  </div>
+  ${S.teacherAssignTab==="create"?renderCreateTask(students):renderTaskList(tasks,students)}`;
+}
+
+function renderCreateTask(students){
+  return `<div class="card">
+    <div class="card-title">📋 Create a new task</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0.75rem">
+      <div class="field"><label>Task type</label>
+        <select onchange="S.newTaskType=this.value;render()">
+          <option value="grammar" ${S.newTaskType==="grammar"?"selected":""}>✏️ Grammar</option>
+          <option value="quiz" ${S.newTaskType==="quiz"?"selected":""}>🧩 Quiz</option>
+          <option value="speaking" ${S.newTaskType==="speaking"?"selected":""}>🎙️ Speaking</option>
+        </select>
+      </div>
+      <div class="field"><label>Task title</label>
+        <input placeholder="e.g. Week 3 Grammar" value="${S.newTaskTitle}" oninput="S.newTaskTitle=this.value"/>
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:0.75rem"><label>Instructions / description</label>
+      <textarea rows="2" placeholder="Describe what students should do…" oninput="S.newTaskDesc=this.value" style="resize:vertical">${S.newTaskDesc}</textarea>
+    </div>
+    ${S.newTaskType!=="speaking"?renderTaskQuestionsEditor():renderSpeakingTaskEditor()}
+    <div class="field" style="margin-bottom:0.75rem"><label>Assign to students</label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
+        ${students.length===0?'<span class="muted">No students yet.</span>':students.map(s=>{
+          const sel=S.newTaskAssignTo.includes(s.id);
+          return `<span class="chip ${sel?"chip-blue":"chip-teal"}" onclick="toggleTaskAssign('${s.id}')">${sel?"✓ ":""} ${s.name}</span>`;
+        }).join("")}
+        ${students.length>0?`<span class="chip chip-purple" onclick="assignAllStudents()">Select all</span>`:""}
+      </div>
+    </div>
+    ${S.newTaskErr?`<div class="alert-err">${S.newTaskErr}</div>`:""}
+    <div style="text-align:right"><button class="btn-primary" onclick="createTask()">Publish task →</button></div>
+  </div>`;
+}
+
+function renderTaskQuestionsEditor(){
+  return `<div style="margin-bottom:0.75rem">
+    <div class="field" style="margin-bottom:8px"><label>Questions</label></div>
+    ${S.newTaskQuestions.map((q,i)=>`
+      <div style="background:var(--surface2);border-radius:12px;padding:10px;margin-bottom:8px;border:2px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:0.78rem;font-weight:800;color:var(--text2)">Q${i+1}</span>
+          <button class="btn-sm btn-danger" onclick="removeTaskQ(${i})">✕</button>
+        </div>
+        <input placeholder="Question…" value="${q.q}" oninput="S.newTaskQuestions[${i}].q=this.value" style="margin-bottom:6px"/>
+        ${S.newTaskType==="quiz"?`
+          ${q.options.map((o,j)=>`<div class="row" style="gap:6px;margin-bottom:4px">
+            <input placeholder="Option ${j+1}" value="${o}" oninput="S.newTaskQuestions[${i}].options[${j}]=this.value" style="flex:1"/>
+            <input type="radio" name="correct_${i}" ${q.correct===j?"checked":""} onchange="S.newTaskQuestions[${i}].correct=${j}" title="Mark as correct"/>
+          </div>`).join("")}
+        `:`<input placeholder="Correct answer…" value="${q.correct||""}" oninput="S.newTaskQuestions[${i}].correct=this.value"/>`}
+      </div>`).join("")}
+    <button class="btn-sm btn-primary" onclick="addTaskQ()">+ Add question</button>
+  </div>`;
+}
+
+function renderSpeakingTaskEditor(){
+  return `<div class="muted" style="margin-bottom:0.75rem;font-style:italic">For speaking tasks, students will read the description/prompt and record their answer.</div>`;
+}
+
+function renderTaskList(tasks,students){
+  if(tasks.length===0)return`<div class="card"><div class="empty">No tasks created yet. Create your first! 📋</div></div>`;
+  return tasks.map(t=>`
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:start">
+        <div>
+          <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--blue-dark);margin-bottom:3px">${t.type==="grammar"?"✏️ Grammar":t.type==="quiz"?"🧩 Quiz":"🎙️ Speaking"}</div>
+          <div style="font-weight:800;font-size:0.95rem">${t.title}</div>
+          <div class="muted">${t.description}</div>
+          <div style="margin-top:6px;font-size:0.78rem;color:var(--text2)">
+            ${t.assignedTo.map(sid=>{const s=DB.users.find(u=>u.id===sid);return s?`<span class="chip chip-teal" style="font-size:0.7rem;padding:2px 8px;cursor:default">${s.name} ${t.doneBy.includes(sid)?"✓":""}</span>`:"";}).join("")}
+          </div>
+        </div>
+        <button class="btn-sm btn-danger" onclick="deleteTask('${t.id}')">Delete</button>
+      </div>
+    </div>`).join("");
+}
+
+function addTaskQ(){
+  const q=S.newTaskType==="quiz"?{q:"",options:["","","",""],correct:0}:{q:"",correct:""};
+  set({newTaskQuestions:[...S.newTaskQuestions,q]});
+}
+function removeTaskQ(i){
+  const qs=[...S.newTaskQuestions];qs.splice(i,1);set({newTaskQuestions:qs});
+}
+function toggleTaskAssign(sid){
+  const arr=S.newTaskAssignTo.includes(sid)?S.newTaskAssignTo.filter(i=>i!==sid):[...S.newTaskAssignTo,sid];
+  set({newTaskAssignTo:arr});
+}
+function assignAllStudents(){
+  set({newTaskAssignTo:myStudents(S.user.id).map(s=>s.id)});
+}
+function createTask(){
+  if(!S.newTaskTitle.trim()){set({newTaskErr:"Please add a task title."});return}
+  if(!S.newTaskDesc.trim()){set({newTaskErr:"Please add a description."});return}
+  if(S.newTaskAssignTo.length===0){set({newTaskErr:"Please assign to at least one student."});return}
+  if(S.newTaskType!=="speaking"&&S.newTaskQuestions.length===0){set({newTaskErr:"Please add at least one question."});return}
+  const task={
+    id:"a"+(++DB.nextId),
+    teacherId:S.user.id,
+    title:S.newTaskTitle.trim(),
+    type:S.newTaskType,
+    description:S.newTaskDesc.trim(),
+    questions:[...S.newTaskQuestions],
+    assignedTo:[...S.newTaskAssignTo],
+    doneBy:[],
+  };
+  DB.assignments.push(task);
+  set({newTaskTitle:"",newTaskDesc:"",newTaskQuestions:[],newTaskAssignTo:[],newTaskErr:"",teacherAssignTab:"list"});
+}
+function deleteTask(id){DB.assignments=DB.assignments.filter(a=>a.id!==id);render()}
+
+// ─── STUDENT ──────────────────────────────────────────────────────────────────
+function renderStudent(){
+  const words=studentWords(S.user.id);
+  const pending=myAssignments(S.user.id).filter(a=>!a.doneBy.includes(S.user.id)).length;
+  return renderHeader("student")+`
+  <div class="tabs">
+    <button class="tab ${S.studentTab==="flashcards"?"active":""}" onclick="switchTab('flashcards')">🃏 Cards</button>
+    <button class="tab ${S.studentTab==="multiple"?"active":""}" onclick="switchTab('multiple')">🧩 Quiz</button>
+    <button class="tab ${S.studentTab==="grammar"?"active":""}" onclick="switchTab('grammar')">✏️ Grammar</button>
+    <button class="tab ${S.studentTab==="speaking"?"active":""}" onclick="switchTab('speaking')">🎙️ Speaking</button>
+    <button class="tab ${S.studentTab==="tasks"?"active":""}" onclick="switchTab('tasks')">📋 Tasks${pending>0?` <span style="background:var(--pink);color:#fff;border-radius:10px;padding:1px 6px;font-size:0.65rem;margin-left:2px">${pending}</span>`:""}</button>
+    <button class="tab ${S.studentTab==="progress"?"active":""}" onclick="switchTab('progress')">📊 Progress</button>
+  </div>
+  ${S.studentTab==="flashcards"?renderFlashcards(words):
+    S.studentTab==="multiple"?renderMultiple(words):
+    S.studentTab==="grammar"?renderGrammarPage(words):
+    S.studentTab==="speaking"?renderSpeaking(words):
+    S.studentTab==="tasks"?renderStudentTasks():
+    renderProgress(words)}`;
+}
+
+function switchTab(t){
+  set({studentTab:t,fcFlipped:false,quizQ:null,quizAnswered:null,
+    grammarTask:null,grammarAnswered:null,grammarExplain:null,grammarExplainLoading:false,
+    speakingData:null,currentAssignment:null,assignAnswers:{},assignDone:false});
+}
+
+// ─── FLASHCARDS ───────────────────────────────────────────────────────────────
+function renderFlashcards(words){
+  const addOwn=`<div class="card">
+    <div class="card-title">➕ Add a word yourself</div>
+    <div style="display:grid;grid-template-columns:1fr 2fr 1fr;gap:10px;align-items:start">
+      <div class="field"><label>English word</label>
+        <input id="sw" placeholder="e.g. grateful" oninput="onWordInput(this.value)"/>
+        ${S.transLoading?`<div class="trans-loading">🔍 Looking up…</div>`:""}
+        ${S.transSuggestions.length?`<div class="trans-box">${S.transSuggestions.map(t=>`<span class="trans-chip" onclick="applyTranslation('${t.replace(/'/g,"&#39;")}')">${t}</span>`).join("")}</div>`:""}
+      </div>
+      <div class="field"><label>Definition (English)</label>
+        <input id="sd" placeholder="What does it mean?" oninput="S.newDef=this.value" onkeydown="if(event.key==='Enter')studentAddWord()"/>
+      </div>
+      <div class="field"><label>Russian translation</label>
+        <input id="sr" placeholder="перевод" value="${S.transRu}" oninput="S.transRu=this.value"/>
+      </div>
+    </div>
+    <div style="margin-top:10px;text-align:right"><button class="btn-green btn-sm" onclick="studentAddWord()">+ Add</button></div>
+  </div>`;
+
+  if(words.length===0)return`<div class="card"><div class="empty">No words yet. Add your own below or ask your teacher! 🌱</div></div>${addOwn}`;
+
+  const w=words[S.fcIdx%words.length];
+  const emoji=S.fcEmoji||CARD_EMOJIS[S.fcIdx%CARD_EMOJIS.length];
+  return `
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div class="card-title" style="margin:0">Word ${S.fcIdx%words.length+1} of ${words.length}</div>
+      <div class="emoji-counter">${CARD_EMOJIS.slice(0,5).map((e,i)=>`<span style="opacity:${i<Math.ceil((S.fcIdx%words.length+1)/words.length*5)?1:0.2}">${e}</span>`).join("")}</div>
+    </div>
+    <div class="fc-wrap" onclick="set({fcFlipped:!S.fcFlipped})">
+      <div class="fc ${S.fcFlipped?"flipped":""}">
+        <div class="fc-front">
+          <div style="font-size:2rem;margin-bottom:8px">${emoji}</div>
+          <div class="fc-word">${w.word}</div>
+          <div class="fc-hint">tap to flip ↩</div>
+        </div>
+        <div class="fc-back">
+          <div class="fc-def">${w.def}</div>
+          ${w.ru?`<div class="fc-ru">🇷🇺 ${w.ru}</div>`:""}
+        </div>
+      </div>
+    </div>
+    <div class="row" style="justify-content:center;gap:14px">
+      <button onclick="fcNav(-1)">← Prev</button>
+      <span class="muted" style="font-weight:700">${S.fcIdx%words.length+1} / ${words.length}</span>
+      <button class="btn-primary" onclick="fcNav(1)">Next →</button>
+    </div>
+  </div>
+  ${S.addFlash?`<div style="text-align:center;font-size:1.6rem;margin-bottom:0.5rem">${S.addFlash.emojis.join(" ")}</div>`:""}
+  ${addOwn}
+  <div class="card">
+    <div class="card-title">All your words</div>
+    <div style="display:flex;flex-wrap:wrap">${words.map((ww,i)=>`<span class="chip chip-teal" onclick="set({fcIdx:${i},fcFlipped:false,fcEmoji:'${CARD_EMOJIS[i%CARD_EMOJIS.length]}'})">
+      ${ww.word}${ww.ru?`<span style="opacity:0.6;font-size:0.7rem;margin-left:3px">· ${ww.ru}</span>`:""}
+    </span>`).join("")}</div>
+  </div>`;
+}
+
+function fcNav(dir){
+  const total=studentWords(S.user.id).length;
+  if(total===0)return;
+  const newIdx=((S.fcIdx+dir)%total+total)%total;
+  set({fcIdx:newIdx,fcFlipped:false,fcEmoji:CARD_EMOJIS[newIdx%CARD_EMOJIS.length]});
+}
+
+function studentAddWord(){
+  const sw=document.getElementById("sw"),sd=document.getElementById("sd"),sr=document.getElementById("sr");
+  const wordVal=(sw?.value.trim())||(S.newWord?.trim())||"";
+  const defVal=(sd?.value.trim())||(S.newDef?.trim())||"";
+  if(!wordVal||!defVal)return;
+  const existing=DB.words.find(w=>w.word.toLowerCase()===wordVal.toLowerCase());
+  if(existing){if(!existing.assignedTo.includes(S.user.id))existing.assignedTo.push(S.user.id);}
+  else DB.words.push({id:"w"+(++DB.nextId),word:wordVal,def:defVal,ru:sr?.value.trim()||S.transRu||"",addedBy:S.user.id,assignedTo:[S.user.id]});
+  if(S.user)logWordAdded(S.user.id);
+  const emojis=rndEmoji(ADD_EMOJIS,5);
+  set({newWord:"",newDef:"",transRu:"",transSuggestions:[],transLoading:false,addFlash:{emojis}});
+  setTimeout(()=>set({addFlash:null}),1800);
+}
+
+// ─── MULTIPLE CHOICE ──────────────────────────────────────────────────────────
+function renderMultiple(words){
+  if(words.length<2)return`<div class="card"><div class="empty">You need at least 2 words to start a quiz. 📝</div></div>`;
+  if(!S.quizQ)return`
+  <div class="card" style="text-align:center;padding:2rem">
+    <div class="score-grid">
+      <div class="score-card"><div class="score-num" style="color:var(--teal)">${S.quizScore.c}</div><div class="score-lbl">Correct</div></div>
+      <div class="score-card"><div class="score-num">${S.quizScore.t}</div><div class="score-lbl">Answered</div></div>
+      <div class="score-card"><div class="score-num">${S.quizScore.t>0?Math.round(S.quizScore.c/S.quizScore.t*100):0}%</div><div class="score-lbl">Accuracy</div></div>
+      <div class="score-card"><div class="score-num">${words.length}</div><div class="score-lbl">Words</div></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:0.5rem">
+      <button class="btn-primary" onclick="startDefQuiz()">📖 Definition quiz</button>
+      <button class="btn-green" onclick="startGapQuiz()">📝 Fill-in-the-gap</button>
+      ${words.some(w=>w.ru)?`<button style="background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:none" onclick="startRuQuiz()">🇷🇺 Translation quiz</button>`:""}
+    </div>
+  </div>`;
+  const q=S.quizQ;
+  return `<div class="card">
+    <div style="font-size:1.1rem;font-weight:800;margin-bottom:1.3rem;color:var(--blue);padding:14px;background:var(--blue-light);border-radius:14px;border:2px solid var(--blue)">
+      ${q.type==="def"?`"${q.word}"`:q.sentence}
+    </div>
+    ${q.options.map(opt=>{
+      let cls="quiz-opt";
+      if(S.quizAnswered){if(opt===q.correct)cls+=" correct";else if(opt===S.quizAnswered)cls+=" wrong";}
+      const safe=opt.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+      return `<button class="${cls}" ${S.quizAnswered?"disabled":""} onclick="answerQuiz('${safe}')">${opt}</button>`;
+    }).join("")}
+    ${S.quizAnswered?`
+      <div style="margin-top:0.85rem;padding:12px 16px;border-radius:12px;font-size:0.9rem;font-weight:700;background:${S.quizAnswered===q.correct?"var(--green-light)":"var(--red-light)"};color:${S.quizAnswered===q.correct?"var(--green-dark)":"var(--red)"}">
+        ${S.quizAnswered===q.correct?"🎉 Correct!":"😅 Correct answer: <strong>"+q.correct+"</strong>"}
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:0.85rem">
+        <button onclick="set({quizQ:null,quizAnswered:null})">← Back</button>
+        <button class="btn-primary" onclick="nextQuiz()">Next question →</button>
+      </div>`:`<div style="text-align:right;margin-top:0.5rem"><button class="btn-sm" onclick="set({quizQ:null,quizAnswered:null})">← Back</button></div>`}
+  </div>`;
+}
+function buildDefQ(words){
+  const idx=Math.floor(Math.random()*words.length),correct=words[idx];
+  const opts=[...words.filter((_,i)=>i!==idx).sort(()=>Math.random()-0.5).slice(0,3).map(w=>w.def),correct.def].sort(()=>Math.random()-0.5);
+  return{type:"def",word:correct.word,correct:correct.def,options:opts};
+}
+function buildGapQ(words){
+  const pool=words.filter(w=>w.ex&&w.ex.toLowerCase().includes(w.word.toLowerCase()));
+  const src=pool.length>=2?pool:words;
+  const correct=src[Math.floor(Math.random()*src.length)];
+  const opts=[...words.filter(w=>w.word!==correct.word).sort(()=>Math.random()-0.5).slice(0,3).map(w=>w.word),correct.word].sort(()=>Math.random()-0.5);
+  const sentence=correct.ex||`She showed great ${correct.word} in her work.`;
+  return{type:"gap",sentence:sentence.replace(new RegExp(correct.word,"gi"),"______"),correct:correct.word,options:opts};
+}
+function buildRuQ(words){
+  const wru=words.filter(w=>w.ru);if(wru.length<2)return buildDefQ(words);
+  const correct=wru[Math.floor(Math.random()*wru.length)];
+  const opts=[...wru.filter(w=>w.word!==correct.word).sort(()=>Math.random()-0.5).slice(0,3).map(w=>w.ru),correct.ru].sort(()=>Math.random()-0.5);
+  return{type:"def",word:correct.word,correct:correct.ru,options:opts};
+}
+function startDefQuiz(){set({quizQ:buildDefQ(studentWords(S.user.id)),quizAnswered:null})}
+function startGapQuiz(){set({quizQ:buildGapQ(studentWords(S.user.id)),quizAnswered:null})}
+function startRuQuiz(){set({quizQ:buildRuQ(studentWords(S.user.id)),quizAnswered:null})}
+function answerQuiz(ans){
+  const q=S.quizQ;
+  const c=ans===q.correct;
+  set({quizAnswered:ans,quizScore:{c:S.quizScore.c+(c?1:0),t:S.quizScore.t+1}});
+  if(S.user)logQuiz(S.user.id,c,q.word||"",q.type==="gap"?q.sentence:q.word,ans,q.correct);
+}
+function nextQuiz(){
+  const words=studentWords(S.user.id),r=Math.random();
+  set({quizQ:r<0.4?buildDefQ(words):r<0.7?buildGapQ(words):buildRuQ(words),quizAnswered:null});
+}
+
+// ─── GRAMMAR ──────────────────────────────────────────────────────────────────
+function renderGrammarPage(words){
+  if(words.length===0)return`<div class="card"><div class="empty">No words yet! 📝</div></div>`;
+  return `<div class="card" style="${!S.grammarTask?"text-align:center;padding:2rem":""}">
+    ${!S.grammarTask?`
+      <div style="font-size:3rem;margin-bottom:1rem">🎯</div>
+      <div style="font-size:1.05rem;font-weight:800;margin-bottom:0.5rem">Ready to practise grammar?</div>
+      <button class="btn-primary" onclick="doGrammar()">Generate task 🎲</button>
+    `:renderGrammarTask()}
+  </div>`;
+}
+function doGrammar(){
+  const words=studentWords(S.user.id);if(words.length===0)return;
+  const w=words[Math.floor(Math.random()*words.length)];
+  set({grammarTask:makeGrammarTask(w.word),grammarAnswered:null,grammarExplain:null,grammarExplainLoading:false});
+}
+function renderGrammarTask(){
+  const t=S.grammarTask;if(!t)return"";
+  return `
+  <div class="grammar-q">
+    <h4>✏️ ${t.type}</h4>
+    <p style="font-weight:800;margin-bottom:8px">${t.instruction}</p>
+    <p style="font-style:italic;font-size:1rem">${t.question}</p>
+  </div>
+  ${t.options.map(opt=>{
+    let cls="quiz-opt";
+    if(S.grammarAnswered){if(opt===t.correct)cls+=" correct";else if(opt===S.grammarAnswered)cls+=" wrong";}
+    const safe=opt.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+    return `<button class="${cls}" ${S.grammarAnswered?"disabled":""} onclick="answerGrammar('${safe}')">${opt}</button>`;
+  }).join("")}
+  ${S.grammarAnswered?`
+    <div style="margin-top:0.85rem;padding:12px 16px;border-radius:12px;font-size:0.9rem;font-weight:700;background:${S.grammarAnswered===t.correct?"var(--green-light)":"var(--red-light)"};color:${S.grammarAnswered===t.correct?"var(--green-dark)":"var(--red)"}">
+      ${S.grammarAnswered===t.correct?"🎉 Correct!":"😅 Correct answer: <strong>"+t.correct+"</strong>"}
+    </div>
+    ${S.grammarExplainLoading?`<div class="ai-spin"><span class="dot"></span><span class="dot"></span><span class="dot"></span> Claude is explaining…</div>`:""}
+    ${S.grammarExplain?`<div class="ai-box"><div class="ai-label">✨ Claude explains</div>${S.grammarExplain}</div>`:""}
+    <div style="text-align:right;margin-top:0.85rem">
+      <button class="btn-primary" onclick="doGrammar()">Next task 🎲</button>
+    </div>`:""}`;
+}
+function answerGrammar(ans){
+  const t=S.grammarTask;
+  set({grammarAnswered:ans});
+  fetchGrammarExplanation(t,ans,t.correct);
+  if(S.user)logGrammar(S.user.id,ans===t.correct,t.type,t.question,ans,t.correct);
+}
+
+// ─── SPEAKING ─────────────────────────────────────────────────────────────────
+function renderSpeaking(words){
+  if(words.length===0)return`<div class="card"><div class="empty">No words yet! 🌱</div></div>`;
+  return `<div class="card">
+    ${S.speakingData?`
+      <div class="speaking-prompt">
+        <h4>🗣️ Your speaking task</h4>
+        <p>${S.speakingData.prompt}</p>
+        <div style="margin-top:8px;font-size:0.78rem;color:var(--teal-dark);opacity:0.8">Focus word: <strong>${S.speakingData.word}</strong></div>
+      </div>
+      <button class="btn-sm" onclick="set({speakingData:null})" style="margin-bottom:1rem">↺ New prompt</button>
+    `:`<button class="btn-primary" onclick="set({speakingData:makeSpeakingPrompt(studentWords(S.user.id))})" style="margin-bottom:1rem">✨ Get speaking task</button>`}
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0.85rem;padding:1.25rem 0">
+      <div style="font-size:0.92rem;font-weight:800;color:var(--teal-dark)">Record your answer</div>
+      <button class="mic-btn ${S.recording?"rec":""}" onclick="toggleRec()">${S.recording?"⏹":"🎤"}</button>
+      <div class="muted" style="font-weight:700">${S.recording?"🔴 Recording… click to stop":"Click to start recording"}</div>
+    </div>
+    ${S.uploadingAudio?`<div class="ai-spin" style="justify-content:center;padding:0.5rem 0"><span class="dot"></span><span class="dot"></span><span class="dot"></span> Uploading audio…</div>`:""}
+    ${S.recordings.length?`<div style="border-top:2px dashed var(--border);padding-top:1rem">
+      <div class="card-title">🎵 Recordings (${S.recordings.length})</div>
+      ${S.recordings.map((r,i)=>`<div class="list-row" style="flex-direction:column;align-items:flex-start;gap:6px">
+        <div class="row" style="width:100%;justify-content:space-between">
+          <div><span style="font-size:0.88rem;font-weight:700">Recording ${i+1} · ${r.dur}s</span>
+          <div class="muted" style="font-size:0.72rem">${r.prompt?r.prompt.slice(0,50)+"…":""} · ${r.date}</div></div>
+          ${r.audioUrl?`<span style="font-size:0.72rem;background:var(--teal-light);color:var(--teal-dark);border-radius:6px;padding:2px 8px;font-weight:700">☁️ Saved</span>`:`<span style="font-size:0.72rem;color:var(--text3);font-weight:600">Local only</span>`}
+        </div>
+        ${r.audioUrl?`<audio controls src="${r.audioUrl}" style="width:100%;height:32px;border-radius:8px"></audio>`:""}
+      </div>`).join("")}
+    </div>`:""}
+  </div>`;
+}
+let _recTimer=null,_recSecs=0,_mediaRecorder=null,_audioChunks=[];
+
+async function toggleRec(){
+  if(S.recording){
+    // Stop recording
+    clearInterval(_recTimer);
+    if(_mediaRecorder&&_mediaRecorder.state!=="inactive")_mediaRecorder.stop();
+  }else{
+    // Start recording
+    try{
+      const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+      _audioChunks=[];
+      _mediaRecorder=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported("audio/webm")?"audio/webm":"audio/ogg"});
+      _mediaRecorder.ondataavailable=e=>{if(e.data.size>0)_audioChunks.push(e.data)};
+      _mediaRecorder.onstop=async()=>{
+        const dur=_recSecs;_recSecs=0;
+        stream.getTracks().forEach(t=>t.stop());
+        const blob=new Blob(_audioChunks,{type:_mediaRecorder.mimeType});
+        const date=new Date().toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+        // Upload to Cloudinary
+        let audioUrl=null;
+        if(CLOUDINARY_CLOUD_NAME!=="YOUR_CLOUD_NAME_HERE"){
+          try{
+            set({uploadingAudio:true});
+            const fd=new FormData();
+            fd.append("file",blob,"recording.webm");
+            fd.append("upload_preset",CLOUDINARY_UPLOAD_PRESET);
+            fd.append("resource_type","video"); // Cloudinary uses "video" for audio
+            const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`,{method:"POST",body:fd});
+            const data=await res.json();
+            audioUrl=data.secure_url||null;
+          }catch(e){console.warn("Cloudinary upload failed:",e);}
+          set({uploadingAudio:false});
+        }
+        if(S.user)logSpeaking(S.user.id,dur,S.speakingData?.prompt||"",audioUrl);
+        set({recording:false,recordings:[...S.recordings,{dur,date,audioUrl,prompt:S.speakingData?.prompt||""}]});
+      };
+      _mediaRecorder.start();
+      _recSecs=0;_recTimer=setInterval(()=>_recSecs++,1000);
+      set({recording:true});
+    }catch(err){
+      alert("Microphone access denied. Please allow microphone in browser settings.");
+    }
+  }
+}
+
+// ─── STUDENT TASKS ────────────────────────────────────────────────────────────
+function renderStudentTasks(){
+  if(S.currentAssignment)return renderDoTask();
+  const tasks=myAssignments(S.user.id);
+  if(tasks.length===0)return`<div class="card"><div class="empty">No tasks from your teacher yet. Keep studying! 📚</div></div>`;
+  return tasks.map(t=>{
+    const done=t.doneBy.includes(S.user.id);
+    return `<div class="assign-task-card ${done?"task-done":""}">
+      <div class="task-type">${t.type==="grammar"?"✏️ Grammar":t.type==="quiz"?"🧩 Quiz":"🎙️ Speaking"}</div>
+      <div class="task-title">${t.title}</div>
+      <div class="task-desc">${t.description}</div>
+      <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:0.78rem;color:var(--text2);font-weight:600">${done?"✅ Completed":"Pending"}</span>
+        ${done?"":` <button class="btn-primary btn-sm" onclick="startTask('${t.id}')">Start →</button>`}
+      </div>
+    </div>`;
+  }).join("");
+}
+function startTask(id){
+  const t=DB.assignments.find(a=>a.id===id);
+  if(!t)return;
+  set({currentAssignment:t,assignAnswers:{},assignDone:false});
+}
+function renderDoTask(){
+  const t=S.currentAssignment;
+  if(S.assignDone)return`
+    <div class="card" style="text-align:center;padding:2rem">
+      <div style="font-size:3rem;margin-bottom:0.5rem">🎉</div>
+      <div style="font-size:1.1rem;font-weight:800;margin-bottom:0.5rem">Task complete!</div>
+      <div class="muted" style="margin-bottom:1.5rem">Great work on "${t.title}"</div>
+      <button class="btn-primary" onclick="set({currentAssignment:null,assignAnswers:{},assignDone:false})">← Back to tasks</button>
+    </div>`;
+  if(t.type==="speaking")return`
+    <div class="card">
+      <button class="btn-sm" style="margin-bottom:1rem" onclick="set({currentAssignment:null})">← Back</button>
+      <div class="card-title">${t.title}</div>
+      <div class="speaking-prompt"><h4>🗣️ Task prompt</h4><p>${t.description}</p></div>
+      ${renderSpeaking(studentWords(S.user.id)).replace("No words yet! 🌱","")}
+      <div style="text-align:right;margin-top:1rem"><button class="btn-primary" onclick="completeTask('${t.id}')">Mark as done ✓</button></div>
+    </div>`;
+  return `<div class="card">
+    <button class="btn-sm" style="margin-bottom:1rem" onclick="set({currentAssignment:null})">← Back</button>
+    <div class="card-title">${t.title}</div>
+    <div class="muted" style="margin-bottom:1rem">${t.description}</div>
+    ${t.questions.map((q,i)=>`
+      <div style="background:var(--surface2);border-radius:12px;padding:12px;margin-bottom:10px;border:2px solid var(--border)">
+        <div style="font-weight:800;margin-bottom:8px">Q${i+1}: ${q.q}</div>
+        ${t.type==="quiz"&&q.options?
+          q.options.map((o,j)=>{
+            const sel=S.assignAnswers[i]===j;
+            return `<button class="quiz-opt ${sel?"correct":""}" onclick="S.assignAnswers[${i}]=${j};render()">${o}</button>`;
+          }).join(""):
+          `<input placeholder="Your answer…" value="${S.assignAnswers[i]||""}" oninput="S.assignAnswers[${i}]=this.value;render()"/>`}
+      </div>`).join("")}
+    <div style="text-align:right;margin-top:0.5rem">
+      <button class="btn-primary" onclick="completeTask('${t.id}')">Submit ✓</button>
+    </div>
+  </div>`;
+}
+function completeTask(id){
+  const t=DB.assignments.find(a=>a.id===id);
+  if(t&&!t.doneBy.includes(S.user.id))t.doneBy.push(S.user.id);
+  set({assignDone:true});
+}
+
+// ─── PROGRESS ─────────────────────────────────────────────────────────────────
+function renderProgress(words){
+  const u=S.user;
+  const pct=S.quizScore.t>0?Math.round(S.quizScore.c/S.quizScore.t*100):0;
+  const level=pct>=80?"🏆 Champion":pct>=60?"⭐ Advanced":pct>=40?"📈 Improving":"🌱 Beginner";
+  const firstName=u.name.split(" ")[0];
+  return `
+  <div class="motivation-box">
+    <div class="mot-emoji">${level.split(" ")[0]}</div>
+    ${S.motivationLoading?`<div class="ai-spin" style="justify-content:center"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`:""}
+    ${S.motivation?`<div class="mot-text">${S.motivation}</div>`:`<div class="mot-text" style="color:var(--text2)">${level} — keep it up, ${firstName}!</div>`}
+    <button class="btn-sm" style="margin-top:10px;background:var(--yellow);border-color:var(--yellow-dark);color:var(--yellow-dark)" onclick="fetchMotivation('${firstName}',${pct},${words.length})">
+      ${S.motivationLoading?"…":"✨ Get motivation"}
+    </button>
+  </div>
+  <div class="card">
+    <div class="score-grid">
+      <div class="score-card"><div class="score-num" style="color:var(--teal)">${words.length}</div><div class="score-lbl">Words</div></div>
+      <div class="score-card"><div class="score-num" style="color:var(--blue)">${S.quizScore.c}</div><div class="score-lbl">Correct</div></div>
+      <div class="score-card"><div class="score-num" style="color:var(--purple)">${pct}%</div><div class="score-lbl">Accuracy</div></div>
+      <div class="score-card"><div class="score-num" style="color:var(--coral)">${S.recordings.length}</div><div class="score-lbl">Recordings</div></div>
+    </div>
+    <div style="margin:0.5rem 0 1.2rem">
+      <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;font-weight:700">
+        <span>Overall mastery</span><span style="color:var(--teal)">${u.progress}%</span>
+      </div>
+      <div class="progress-bar" style="height:12px"><div class="progress-fill" style="width:${u.progress}%"></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Your word list — click to study 🃏</div>
+    ${words.length===0?'<div class="empty">No words yet.</div>':
+      `<div style="display:flex;flex-wrap:wrap">${words.map((w,i)=>`<span class="chip chip-blue" onclick="set({studentTab:'flashcards',fcIdx:${i},fcFlipped:false})">${w.word}${w.ru?`<span style="opacity:0.6;font-size:0.7rem;margin-left:3px">· ${w.ru}</span>`:""}</span>`).join("")}</div>`}
+  </div>`;
+}
+
+// ─── WORD MANAGEMENT ──────────────────────────────────────────────────────────
+function addWord(){
+  const w=document.getElementById("nw"),d=document.getElementById("nd"),r=document.getElementById("nr");
+  if(!w?.value.trim()||!d?.value.trim()){alert("Word and definition are required!");return}
+  DB.words.push({id:"w"+(++DB.nextId),word:w.value.trim(),def:d.value.trim(),ru:r?.value.trim()||S.transRu||"",addedBy:S.user.id,assignedTo:[]});
+  const emojis=rndEmoji(ADD_EMOJIS,5);
+  set({newWord:"",newDef:"",transRu:"",transSuggestions:[],transLoading:false,addFlash:{emojis}});
+  setTimeout(()=>set({addFlash:null}),1800);
+}
+function removeWord(id){DB.words=DB.words.filter(w=>w.id!==id);render()}
+function addStudent(){
+  if(!S.newStudName.trim()||!S.newStudEmail.trim()){set({newStudErr:"Name and email are required."});return}
+  if(DB.users.find(u=>u.email===S.newStudEmail)){set({newStudErr:"This email already exists."});return}
+  DB.users.push({id:"s"+(++DB.nextId),role:"student",name:S.newStudName.trim(),email:S.newStudEmail.trim(),pass:"1234",teacherId:S.user.id,progress:0,quizCorrect:0,quizTotal:0});
+  set({newStudName:"",newStudEmail:"",newStudErr:""});
+}
+function removeStudent(id){DB.users=DB.users.filter(u=>u.id!==id);render()}
+function toggleAssign(wid,sid){
+  const w=DB.words.find(x=>x.id===wid);if(!w)return;
+  w.assignedTo=w.assignedTo.includes(sid)?w.assignedTo.filter(i=>i!==sid):[...w.assignedTo,sid];
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
