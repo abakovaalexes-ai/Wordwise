@@ -153,7 +153,8 @@ button:active{transform:scale(0.97)}
 <div id="root" class="app"></div>
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const GOOGLE_CLIENT_ID = "368168830174-o2ii4m6cai25t2poo1ov9h2drf16ua72.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID_HERE";
+const ANTHROPIC_API_KEY = "YOUR_UPLOAD_PRESET_HERE";
 const CLOUDINARY_CLOUD_NAME = "jprssup0"; 
 const CLOUDINARY_UPLOAD_PRESET = "jx5dmhsx"; 
 
@@ -336,13 +337,13 @@ function applyTranslation(t){
 
 // ─── CLAUDE API ───────────────────────────────────────────────────────────────
 async function callClaude(prompt){
-  const r=await fetch("/.netlify/functions/claude",{
+  const r=await fetch("https://api.anthropic.com/v1/messages",{
     method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({prompt})
+    headers:{"Content-Type":"application/json","x-api-key":ANTHROPIC_API_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:300,messages:[{role:"user",content:prompt}]})
   });
   const d=await r.json();
-  return d.text||"";
+  return d.content?.[0]?.text||"";
 }
 
 async function fetchGrammarExplanation(task,answered,correct){
@@ -389,20 +390,26 @@ function tryLogin(){
 }
 function googleLogin(){
   if(!window.google){alert("Google Sign-In didn't load. Check your internet connection.");return}
-  google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:handleGoogleCredential,auto_select:false});
-  google.accounts.id.prompt(n=>{
-    if(n.isNotDisplayed()||n.isSkippedMoment()){
-      google.accounts.id.renderButton(document.getElementById("google-btn-container"),{theme:"outline",size:"large",width:300});
+  const client=google.accounts.oauth2.initTokenClient({
+    client_id:GOOGLE_CLIENT_ID,
+    scope:"email profile openid",
+    callback:async(tokenResponse)=>{
+      if(tokenResponse.error){set({loginErr:"Google sign-in failed."});return}
+      try{
+        const res=await fetch("https://www.googleapis.com/oauth2/v3/userinfo",{
+          headers:{Authorization:"Bearer "+tokenResponse.access_token}
+        });
+        const info=await res.json();
+        const email=info.email,name=info.name||email.split("@")[0];
+        const existing=DB.users.find(u=>u.email===email);
+        if(existing){set({user:existing,view:existing.role,loginErr:"",regErr:""});return}
+        set({authMode:"register",regName:name,regEmail:email,regPass:"google-oauth",regErr:"",googlePrefilled:true});
+      }catch(e){set({loginErr:"Google sign-in failed. Please try again."});}
     }
   });
+  client.requestAccessToken({prompt:"select_account"});
 }
-function handleGoogleCredential(response){
-  const payload=JSON.parse(atob(response.credential.split(".")[1]));
-  const email=payload.email,name=payload.name||email.split("@")[0];
-  const existing=DB.users.find(u=>u.email===email);
-  if(existing){set({user:existing,view:existing.role,loginErr:"",regErr:""});return}
-  set({authMode:"register",regName:name,regEmail:email,regPass:"google-oauth",regErr:"",googlePrefilled:true});
-}
+
 function tryRegister(){
   const name=S.regName.trim(),email=S.regEmail.trim(),pass=S.regPass.trim(),role=S.regRole;
   if(!name||!email||!pass){set({regErr:"Please fill in all fields."});return}
@@ -442,8 +449,7 @@ function renderLogin(){
     </div>
     <div style="font-size:1.1rem;font-weight:800;margin-bottom:4px">Sign in as ${S.loginRole}</div>
     <div class="muted" style="margin-bottom:1.25rem">Demo: ${S.loginRole==="teacher"?"teacher@school.com":"mia@school.com"} / 1234</div>
-    <button class="google-btn" onclick="googleLogin()" id="google-signin-btn">${GSVG} Continue with Google</button>
-    <div id="google-btn-container" style="display:flex;justify-content:center;margin-top:6px"></div>
+    <button class="google-btn" onclick="googleLogin()">${GSVG} Continue with Google</button>
     <div class="divider">or sign in with email</div>
     <div class="field" style="margin-bottom:0.75rem"><label>Email</label>
       <input type="email" placeholder="your@email.com" value="${S.loginEmail}" oninput="S.loginEmail=this.value" onkeydown="if(event.key==='Enter')tryLogin()"/></div>
