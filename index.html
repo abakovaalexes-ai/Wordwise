@@ -154,7 +154,6 @@ button:active{transform:scale(0.97)}
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID_HERE";
-const ANTHROPIC_API_KEY = "YOUR_UPLOAD_PRESET_HERE";
 const CLOUDINARY_CLOUD_NAME = "jprssup0"; 
 const CLOUDINARY_UPLOAD_PRESET = "jx5dmhsx"; 
 
@@ -337,13 +336,13 @@ function applyTranslation(t){
 
 // ─── CLAUDE API ───────────────────────────────────────────────────────────────
 async function callClaude(prompt){
-  const r=await fetch("https://api.anthropic.com/v1/messages",{
+  const r=await fetch("/.netlify/functions/claude",{
     method:"POST",
-    headers:{"Content-Type":"application/json","x-api-key":ANTHROPIC_API_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:300,messages:[{role:"user",content:prompt}]})
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({prompt})
   });
   const d=await r.json();
-  return d.content?.[0]?.text||"";
+  return d.text||"";
 }
 
 async function fetchGrammarExplanation(task,answered,correct){
